@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import type { Theme } from "@/types";
+import { FontUploader, getCustomFonts } from "./FontUploader";
 
 interface ThemePanelProps {
   theme: Theme;
@@ -30,6 +31,19 @@ const radiusOptions = [
 ];
 
 export function ThemePanel({ theme, onChange }: ThemePanelProps) {
+  const [customFontOptions, setCustomFontOptions] = useState<{ value: string; label: string }[]>([]);
+
+  function refreshCustomFonts() {
+    const custom = getCustomFonts();
+    setCustomFontOptions(
+      custom.map((f) => ({ value: `'${f.name}', system-ui, sans-serif`, label: `${f.name} (Custom)` }))
+    );
+  }
+
+  useEffect(() => { refreshCustomFonts(); }, []);
+
+  const allFontOptions = [...fontOptions, ...customFontOptions];
+
   function update(key: keyof Theme, value: string) {
     onChange({ ...theme, [key]: value });
   }
@@ -79,7 +93,7 @@ export function ThemePanel({ theme, onChange }: ThemePanelProps) {
               onChange={(e) => update("fontFamily", e.target.value)}
               className="w-full rounded bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500"
             >
-              {fontOptions.map((f) => (
+              {allFontOptions.map((f) => (
                 <option key={f.value} value={f.value}>{f.label}</option>
               ))}
             </select>
@@ -92,10 +106,14 @@ export function ThemePanel({ theme, onChange }: ThemePanelProps) {
               onChange={(e) => update("headingFont", e.target.value)}
               className="w-full rounded bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500"
             >
-              {fontOptions.map((f) => (
+              {allFontOptions.map((f) => (
                 <option key={f.value} value={f.value}>{f.label}</option>
               ))}
             </select>
+          </div>
+
+          <div className="border-t border-zinc-800 pt-3 mt-3">
+            <FontUploader onFontsChange={refreshCustomFonts} />
           </div>
         </div>
       </div>

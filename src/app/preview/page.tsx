@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Render } from "@puckeditor/core";
 import Link from "next/link";
 import { puckConfig } from "@/lib/puck-config";
-import { createAnimatedConfig } from "@/lib/puck-config-animated";
+// Animation now handled by AnimationWrapper in each block config
 import { loadProject } from "@/lib/storage";
 import { applyThemeToRoot, themeToCssVars } from "@/lib/theme";
 import { CookieBanner } from "@/components/CookieBanner";
@@ -14,7 +14,7 @@ export default function PreviewPage() {
   const [project, setProject] = useState<SiteProject | null>(null);
   const [activePage, setActivePage] = useState<Page | null>(null);
   const [showNav, setShowNav] = useState(true);
-  const [animatedConfig] = useState(() => createAnimatedConfig());
+  // Animations are now per-block via AnimationWrapper
 
   useEffect(() => {
     const p = loadProject();
@@ -128,7 +128,7 @@ export default function PreviewPage() {
         }}
       >
         <Render
-          config={animatedConfig}
+          config={puckConfig}
           data={activePage.data as Parameters<typeof Render>[0]["data"]}
         />
       </div>

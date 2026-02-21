@@ -18,11 +18,12 @@ import { applyThemeToRoot } from "@/lib/theme";
 import { ThemePanel } from "@/components/editor/ThemePanel";
 import { PageManager } from "@/components/editor/PageManager";
 import { SeoPanel } from "@/components/editor/SeoPanel";
+import { WhiteLabelPanel } from "@/components/editor/WhiteLabelPanel";
 import { saveCloudProject } from "@/lib/cloud-storage";
 import { supabase } from "@/lib/supabase";
-import type { SiteProject, PageSeo } from "@/types";
+import type { SiteProject, PageSeo, WhiteLabelSettings } from "@/types";
 
-type SidebarTab = "pages" | "theme" | "seo";
+type SidebarTab = "pages" | "theme" | "seo" | "settings";
 
 export default function EditorPage() {
   const [project, setProject] = useState<SiteProject | null>(null);
@@ -186,17 +187,17 @@ export default function EditorPage() {
 
           {/* Tab Switcher */}
           <div className="flex border-b border-white/5">
-            {(["pages", "theme", "seo"] as SidebarTab[]).map((tab) => (
+            {(["pages", "theme", "seo", "settings"] as SidebarTab[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
+                className={`flex-1 py-2 text-[10px] font-medium transition-colors ${
                   activeTab === tab
                     ? "text-indigo-400 border-b border-indigo-500"
                     : "text-zinc-500 hover:text-zinc-400"
                 }`}
               >
-                {tab === "pages" ? "📄" : tab === "theme" ? "🎨" : "🔍"} {tab === "pages" ? "Seiten" : tab === "theme" ? "Theme" : "SEO"}
+                {tab === "pages" ? "📄" : tab === "theme" ? "🎨" : tab === "seo" ? "🔍" : "⚙️"}
               </button>
             ))}
           </div>
@@ -216,7 +217,7 @@ export default function EditorPage() {
                 theme={project.theme}
                 onChange={handleThemeChange}
               />
-            ) : (
+            ) : activeTab === "seo" ? (
               <SeoPanel
                 pageName={activePage?.name || ""}
                 seo={activePage?.seo || { title: "", description: "", ogImage: "" }}
@@ -226,6 +227,16 @@ export default function EditorPage() {
                     p.id === activePage.id ? { ...p, seo } : p
                   );
                   const updated = { ...project, pages: updatedPages, updatedAt: new Date().toISOString() };
+                  saveProject(updated);
+                  setProject(updated);
+                }}
+              />
+            ) : (
+              <WhiteLabelPanel
+                settings={project?.whiteLabel || { enabled: false, customBrand: "", hidePoweredBy: false }}
+                onChange={(wl: WhiteLabelSettings) => {
+                  if (!project) return;
+                  const updated = { ...project, whiteLabel: wl, updatedAt: new Date().toISOString() };
                   saveProject(updated);
                   setProject(updated);
                 }}

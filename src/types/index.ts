@@ -30,12 +30,19 @@ export interface Page {
 
 // ─── Project ──────────────────────────────────────────────────────────────────
 
+export interface WhiteLabelSettings {
+  enabled: boolean;
+  customBrand: string;
+  hidePoweredBy: boolean;
+}
+
 export interface SiteProject {
   id: string;
   name: string;
   theme: Theme;
   pages: Page[];
   activePageId: string;
+  whiteLabel?: WhiteLabelSettings;
   createdAt: string;
   updatedAt: string;
 }

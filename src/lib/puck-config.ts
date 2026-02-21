@@ -1,4 +1,7 @@
 import { Config } from "@puckeditor/core";
+import React from "react";
+import { AnimationWrapper, animationFields, defaultAnimation } from "@/components/blocks/AnimationWrapper";
+import type { AnimationSettings } from "@/components/blocks/AnimationWrapper";
 import { HeroConfig } from "@/components/blocks/Hero";
 import { TextBlockConfig } from "@/components/blocks/TextBlock";
 import { ImageBlockConfig } from "@/components/blocks/ImageBlock";
@@ -15,27 +18,65 @@ import { FooterConfig } from "@/components/blocks/Footer";
 import { SocialLinksConfig } from "@/components/blocks/SocialLinks";
 import { OpeningHoursConfig } from "@/components/blocks/OpeningHours";
 import { GoogleMapConfig } from "@/components/blocks/GoogleMap";
+import { IconBlockConfig } from "@/components/blocks/IconBlock";
+
+// Blocks that should NOT get animation controls (structural elements)
+const noAnimateBlocks = new Set(["Navigation", "Footer", "Spacer", "Divider"]);
+
+// Wrap a block config with animation fields + wrapper
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function withAnimation(config: any, name: string): any {
+  if (noAnimateBlocks.has(name)) return config;
+
+  const OriginalRender = config.render;
+  return {
+    ...config,
+    fields: {
+      ...config.fields,
+      ...animationFields,
+    },
+    defaultProps: {
+      ...config.defaultProps,
+      animation: defaultAnimation,
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    render: function AnimatedBlock(props: any) {
+      const { animation, ...rest } = props;
+      return React.createElement(
+        AnimationWrapper,
+        { animation: animation || defaultAnimation, children: React.createElement(OriginalRender, rest) }
+      );
+    },
+  };
+}
+
+const rawComponents: Record<string, unknown> = {
+  Hero: HeroConfig,
+  TextBlock: TextBlockConfig,
+  ImageBlock: ImageBlockConfig,
+  Gallery: GalleryConfig,
+  CTAButton: CTAButtonConfig,
+  ContactForm: ContactFormConfig,
+  Testimonials: TestimonialsConfig,
+  FAQ: FAQConfig,
+  Video: VideoEmbedConfig,
+  Navigation: NavigationConfig,
+  Footer: FooterConfig,
+  SocialLinks: SocialLinksConfig,
+  OpeningHours: OpeningHoursConfig,
+  GoogleMap: GoogleMapConfig,
+  Icon: IconBlockConfig,
+  Spacer: SpacerConfig,
+  Divider: DividerConfig,
+};
+
+// Apply animation wrapper to all eligible blocks
+const components: Record<string, unknown> = {};
+for (const [name, config] of Object.entries(rawComponents)) {
+  components[name] = withAnimation(config, name);
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const puckConfig: Config<any> = {
-  components: {
-    Hero: HeroConfig as any,
-    TextBlock: TextBlockConfig as any,
-    ImageBlock: ImageBlockConfig as any,
-    Gallery: GalleryConfig as any,
-    CTAButton: CTAButtonConfig as any,
-    ContactForm: ContactFormConfig as any,
-    Testimonials: TestimonialsConfig as any,
-    FAQ: FAQConfig as any,
-    Video: VideoEmbedConfig as any,
-    Navigation: NavigationConfig as any,
-    Footer: FooterConfig as any,
-    SocialLinks: SocialLinksConfig as any,
-    OpeningHours: OpeningHoursConfig as any,
-    GoogleMap: GoogleMapConfig as any,
-    Spacer: SpacerConfig as any,
-    Divider: DividerConfig as any,
-  },
-};
+export const puckConfig: Config<any> = { components: components as any };
 
 export default puckConfig;
