@@ -13,6 +13,7 @@ import {
   renamePage,
   updateTheme,
 } from "@/lib/storage";
+import { exportProjectAsZip } from "@/lib/export";
 import { applyThemeToRoot } from "@/lib/theme";
 import { ThemePanel } from "@/components/editor/ThemePanel";
 import { PageManager } from "@/components/editor/PageManager";
@@ -191,6 +192,22 @@ export default function EditorPage() {
             >
               <span>👁</span> Vorschau
             </Link>
+            <button
+              onClick={async () => {
+                if (!project) return;
+                saveProject(project);
+                const blob = await exportProjectAsZip(project);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${project.name.replace(/\s+/g, "-").toLowerCase()}.zip`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600/20 border border-emerald-500/30 py-2.5 text-xs font-medium text-emerald-400 hover:bg-emerald-600/30 hover:text-emerald-300 transition-colors"
+            >
+              <span>📦</span> Als ZIP exportieren
+            </button>
             <Link
               href="/"
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-800 py-2.5 text-xs font-medium text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors"
