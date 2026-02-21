@@ -57,6 +57,26 @@ export default function EditorPage() {
     }
   }, [project?.theme]);
 
+  // Auto-save to localStorage every 5s, cloud every 30s
+  useEffect(() => {
+    if (!project) return;
+    const localTimer = setInterval(() => {
+      saveProject(project);
+    }, 5000);
+    const cloudTimer = setInterval(async () => {
+      if (!isLoggedIn || !cloudId) return;
+      try {
+        setCloudSaving(true);
+        await saveCloudProject(project, cloudId);
+      } catch (err) {
+        console.error("Auto-save failed:", err);
+      } finally {
+        setCloudSaving(false);
+      }
+    }, 30000);
+    return () => { clearInterval(localTimer); clearInterval(cloudTimer); };
+  }, [project, isLoggedIn, cloudId]);
+
   const activePage = project?.pages.find((p) => p.id === project.activePageId);
 
   const handlePublish = useCallback(
@@ -263,10 +283,10 @@ export default function EditorPage() {
               <span>📦</span> Als ZIP exportieren
             </button>
             <Link
-              href="/"
+              href={isLoggedIn ? "/dashboard" : "/"}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-800 py-2.5 text-xs font-medium text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors"
             >
-              ← Dashboard
+              ← {isLoggedIn ? "Dashboard" : "Startseite"}
             </Link>
           </div>
         </aside>
@@ -286,8 +306,19 @@ export default function EditorPage() {
               </button>
             )}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-500">Seite:</span>
-              <span className="text-xs font-medium text-zinc-300">{activePage.name}</span>
+              <input
+                type="text"
+                value={project.name}
+                onChange={(e) => {
+                  const updated = { ...project, name: e.target.value, updatedAt: new Date().toISOString() };
+                  setProject(updated);
+                  saveProject(updated);
+                }}
+                className="bg-transparent text-xs font-semibold text-zinc-200 border-b border-transparent hover:border-zinc-700 focus:border-indigo-500 focus:outline-none px-1 py-0.5 max-w-[150px]"
+                title="Projekt umbenennen"
+              />
+              <span className="text-zinc-700 text-xs">·</span>
+              <span className="text-xs text-zinc-500">{activePage.name}</span>
               <span className="text-xs text-zinc-600">{activePage.slug}</span>
             </div>
           </div>
@@ -296,7 +327,12 @@ export default function EditorPage() {
             <span className="text-xs text-zinc-600 hidden lg:inline" title="Undo: Ctrl+Z / Redo: Ctrl+Y">
               ↩ Ctrl+Z &nbsp; ↪ Ctrl+Y
             </span>
-            {saved && (
+            {cloudSaving && (
+              <span className="text-xs text-indigo-400 flex items-center gap-1 animate-pulse">
+                ☁️ Speichern...
+              </span>
+            )}
+            {saved && !cloudSaving && (
               <span className="text-xs text-emerald-400 flex items-center gap-1">
                 ✓ Gespeichert
               </span>
