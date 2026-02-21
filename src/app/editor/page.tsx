@@ -18,6 +18,8 @@ import { applyThemeToRoot } from "@/lib/theme";
 import { ThemePanel } from "@/components/editor/ThemePanel";
 import { PageManager } from "@/components/editor/PageManager";
 import { SeoPanel } from "@/components/editor/SeoPanel";
+import { saveCloudProject } from "@/lib/cloud-storage";
+import { supabase } from "@/lib/supabase";
 import type { SiteProject, PageSeo } from "@/types";
 
 type SidebarTab = "pages" | "theme" | "seo";
@@ -27,12 +29,25 @@ export default function EditorPage() {
   const [activeTab, setActiveTab] = useState<SidebarTab>("pages");
   const [saved, setSaved] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [cloudId, setCloudId] = useState<string | null>(null);
+  const [cloudSaving, setCloudSaving] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Load project on mount
+  // Load project on mount + check auth + cloud project ID
   useEffect(() => {
     const p = getOrCreateProject();
     setProject(p);
     applyThemeToRoot(p.theme);
+
+    // Check for cloud project ID in URL
+    const params = new URLSearchParams(window.location.search);
+    const pid = params.get("project");
+    if (pid) setCloudId(pid);
+
+    // Check if logged in
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
   }, []);
 
   // Apply theme whenever it changes
@@ -207,6 +222,30 @@ export default function EditorPage() {
             >
               <span>👁</span> Vorschau
             </Link>
+            {isLoggedIn && (
+              <button
+                onClick={async () => {
+                  if (!project) return;
+                  setCloudSaving(true);
+                  try {
+                    saveProject(project);
+                    const cloud = await saveCloudProject(project, cloudId || undefined);
+                    if (!cloudId) setCloudId(cloud.id);
+                    setSaved(true);
+                    setTimeout(() => setSaved(false), 2000);
+                  } catch (err) {
+                    console.error("Cloud save failed:", err);
+                    alert("Cloud-Speicherung fehlgeschlagen");
+                  } finally {
+                    setCloudSaving(false);
+                  }
+                }}
+                disabled={cloudSaving}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600/20 border border-indigo-500/30 py-2.5 text-xs font-medium text-indigo-400 hover:bg-indigo-600/30 hover:text-indigo-300 transition-colors disabled:opacity-50"
+              >
+                <span>☁️</span> {cloudSaving ? "Speichern..." : "In Cloud speichern"}
+              </button>
+            )}
             <button
               onClick={async () => {
                 if (!project) return;

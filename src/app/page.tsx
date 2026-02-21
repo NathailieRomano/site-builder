@@ -5,15 +5,20 @@ import Link from "next/link";
 import { templates } from "@/lib/templates";
 import { getOrCreateProject, saveProject } from "@/lib/storage";
 import { applyTemplate } from "@/lib/templates";
+import { supabase } from "@/lib/supabase";
 import type { SiteProject } from "@/types";
 import { generateId } from "@/lib/storage";
 
 export default function HomePage() {
   const [project, setProject] = useState<SiteProject | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setProject(getOrCreateProject());
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
   }, []);
 
   function handleApplyTemplate(templateId: string) {
@@ -90,11 +95,26 @@ export default function HomePage() {
             <span className="font-semibold text-white">Site Builder</span>
           </div>
           <nav className="flex items-center gap-4">
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className="rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 hover:bg-white/5 transition-colors"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/auth"
+                className="rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 hover:bg-white/5 transition-colors"
+              >
+                Anmelden
+              </Link>
+            )}
             <Link
-              href="/editor"
+              href={isLoggedIn ? "/dashboard" : "/editor"}
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
             >
-              Editor öffnen →
+              {isLoggedIn ? "Meine Projekte" : "Editor öffnen"} →
             </Link>
           </nav>
         </div>
