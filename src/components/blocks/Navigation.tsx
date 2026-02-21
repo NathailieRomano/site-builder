@@ -91,7 +91,7 @@ export const NavigationConfig = {
       label: "Links",
       arrayFields: {
         label: { type: "text" as const, label: "Text" },
-        href: { type: "text" as const, label: "Link" },
+        href: { type: "text" as const, label: "Link (z.B. /ueber-uns oder #contact)" },
       },
     },
     bgColor: { type: "text" as const, label: "Hintergrundfarbe" },

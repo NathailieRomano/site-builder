@@ -104,6 +104,22 @@ export default function PreviewPage() {
       {/* Content */}
       <div
         className="preview-root"
+        onClick={(e) => {
+          // Intercept internal page links
+          const target = (e.target as HTMLElement).closest("a");
+          if (!target) return;
+          const href = target.getAttribute("href");
+          if (!href || href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("#")) return;
+          // Find matching page by slug
+          const matchedPage = project.pages.find(
+            (p) => p.slug === href || p.slug === "/" + href.replace(/^\//, "")
+          );
+          if (matchedPage) {
+            e.preventDefault();
+            setActivePage(matchedPage);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
         style={{
           paddingTop: showNav ? "48px" : "0",
           backgroundColor: project.theme.backgroundColor,
