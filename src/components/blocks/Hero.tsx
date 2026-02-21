@@ -106,8 +106,13 @@ export const HeroConfig = {
       label: "Hintergrundfarbe",
     },
     bgImage: {
-      type: "text" as const,
-      label: "Hintergrundbild URL",
+      type: "custom" as const,
+      label: "Hintergrundbild",
+      render: ({ value, onChange, field }: { value: string; onChange: (v: string) => void; field: { label: string } }) => {
+        // Dynamic import to avoid SSR issues
+        const { ImageField } = require("@/components/fields/ImageField");
+        return ImageField({ value, onChange, field });
+      },
     },
     textColor: {
       type: "text" as const,

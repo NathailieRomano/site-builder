@@ -319,6 +319,61 @@ export const templates: Template[] = [
       },
     ],
   },
+  {
+    id: "verein",
+    name: "Verein",
+    description: "Für Sportvereine, Kulturvereine und Organisationen — Events, Team, Kontakt",
+    category: "restaurant" as const,
+    thumbnail: "⚽",
+    theme: themePresets.verein,
+    pages: [
+      {
+        name: "Startseite",
+        slug: "/",
+        data: {
+          content: [
+            { type: "Navigation", props: { id: "nav-1", logo: "FC Musterverein", links: [{ label: "Home", href: "#" }, { label: "Über uns", href: "#about" }, { label: "Termine", href: "#events" }, { label: "Kontakt", href: "#contact" }], bgColor: "#059669", textColor: "#ffffff", sticky: true, style: "minimal" } },
+            { type: "Hero", props: { id: "hero-1", title: "Willkommen beim FC Musterverein", subtitle: "Seit 1985 — Gemeinschaft, Sport und Spass für alle Altersgruppen.", ctaText: "Mitglied werden", ctaLink: "#contact", bgColor: "#064e3b", textColor: "#ffffff", height: "large" } },
+            { type: "TextBlock", props: { id: "about-1", heading: "Über unseren Verein", content: "Wir sind ein aktiver Verein mit über 200 Mitgliedern. Bei uns steht der Teamgeist im Vordergrund — ob jung oder alt, Anfänger oder Profi. Komm vorbei und werde Teil unserer Gemeinschaft!", align: "center", size: "medium" } },
+            { type: "Testimonials", props: { id: "test-1", items: [{ name: "Laura M.", role: "Mitglied seit 2019", text: "Der beste Verein der Region! Tolle Leute und super Trainings.", avatar: "" }, { name: "Marco K.", role: "Jugendtrainer", text: "Hier wird Nachwuchsförderung noch gross geschrieben.", avatar: "" }, { name: "Silvia B.", role: "Vorstandsmitglied", text: "Ehrenamtlich dabei zu sein macht hier richtig Spass!", avatar: "" }], columns: "3", style: "cards" } },
+            { type: "FAQ", props: { id: "faq-1", heading: "Häufige Fragen", items: [{ question: "Wie werde ich Mitglied?", answer: "Fülle einfach unser Kontaktformular aus oder komm an einem Trainingsabend vorbei." }, { question: "Was kostet die Mitgliedschaft?", answer: "Erwachsene CHF 120/Jahr, Jugendliche CHF 60/Jahr, Familien CHF 200/Jahr." }, { question: "Wann sind die Trainingszeiten?", answer: "Dienstag und Donnerstag 18:30-20:00, Samstag 10:00-12:00." }], style: "bordered" } },
+            { type: "SocialLinks", props: { id: "social-1", links: [{ platform: "instagram", url: "https://instagram.com/" }, { platform: "facebook", url: "https://facebook.com/" }, { platform: "email", url: "info@fcmuster.ch" }], size: "medium", align: "center", style: "pills" } },
+            { type: "ContactForm", props: { id: "contact-1", heading: "Kontaktiere uns", subheading: "Fragen? Interesse? Schreib uns!", buttonText: "Nachricht senden" } },
+            { type: "Footer", props: { id: "footer-1", companyName: "FC Musterverein", tagline: "Seit 1985 — Sport verbindet.", links: [{ label: "Impressum", href: "#" }, { label: "Datenschutz", href: "#" }], bgColor: "#064e3b", textColor: "#d1fae5", showCopyright: true } },
+          ],
+          root: { props: {} },
+        },
+      },
+    ],
+  },
+  {
+    id: "coiffeur",
+    name: "Coiffeur / Salon",
+    description: "Für Coiffeure, Beauty-Salons und Wellness — Leistungen, Preise, Öffnungszeiten",
+    category: "restaurant" as const,
+    thumbnail: "💇",
+    theme: themePresets.coiffeur,
+    pages: [
+      {
+        name: "Startseite",
+        slug: "/",
+        data: {
+          content: [
+            { type: "Navigation", props: { id: "nav-1", logo: "Salon Elegance", links: [{ label: "Home", href: "#" }, { label: "Leistungen", href: "#services" }, { label: "Öffnungszeiten", href: "#hours" }, { label: "Kontakt", href: "#contact" }], bgColor: "#fdf2f8", textColor: "#1e1b2e", sticky: true, style: "centered" } },
+            { type: "Hero", props: { id: "hero-1", title: "Ihr Salon für Stil & Wohlbefinden", subtitle: "Professionelle Haarschnitte, Colorationen und Styling — in entspannter Atmosphäre.", ctaText: "Termin buchen", ctaLink: "#contact", bgColor: "#831843", textColor: "#fdf2f8", height: "large" } },
+            { type: "TextBlock", props: { id: "services-1", heading: "Unsere Leistungen", content: "✂️ Haarschnitt Damen ab CHF 65\n✂️ Haarschnitt Herren ab CHF 45\n🎨 Coloration ab CHF 85\n💆 Kopfmassage CHF 25\n👰 Hochzeits-Styling ab CHF 150\n💅 Maniküre CHF 45", align: "center", size: "medium" } },
+            { type: "Gallery", props: { id: "gallery-1", images: [{ src: "https://picsum.photos/seed/salon1/600/600", alt: "Salon 1" }, { src: "https://picsum.photos/seed/salon2/600/600", alt: "Salon 2" }, { src: "https://picsum.photos/seed/salon3/600/600", alt: "Salon 3" }, { src: "https://picsum.photos/seed/salon4/600/600", alt: "Salon 4" }], columns: "2", gap: "medium" } },
+            { type: "OpeningHours", props: { id: "hours-1", heading: "Öffnungszeiten", days: [{ day: "Montag", hours: "Geschlossen" }, { day: "Dienstag", hours: "09:00 – 18:00" }, { day: "Mittwoch", hours: "09:00 – 18:00" }, { day: "Donnerstag", hours: "09:00 – 20:00" }, { day: "Freitag", hours: "09:00 – 18:00" }, { day: "Samstag", hours: "08:00 – 16:00" }, { day: "Sonntag", hours: "Geschlossen" }], note: "Termine nach Vereinbarung auch ausserhalb der Öffnungszeiten.", style: "cards" } },
+            { type: "Testimonials", props: { id: "test-1", items: [{ name: "Nina R.", role: "Stammkundin", text: "Der beste Salon in der Stadt! Immer top Beratung und wunderschöne Ergebnisse.", avatar: "" }, { name: "Claudia M.", role: "", text: "Endlich ein Coiffeur der zuhört. Ich bin seit 3 Jahren hier und will nie wieder woanders hin.", avatar: "" }], columns: "2", style: "minimal" } },
+            { type: "GoogleMap", props: { id: "map-1", address: "Bern Altstadt, Schweiz", height: "medium", rounded: true, caption: "Salon Elegance — Mitten in der Altstadt" } },
+            { type: "ContactForm", props: { id: "contact-1", heading: "Termin vereinbaren", subheading: "Rufen Sie uns an oder schreiben Sie uns — wir freuen uns auf Sie!", buttonText: "Anfrage senden", showPhone: true } },
+            { type: "Footer", props: { id: "footer-1", companyName: "Salon Elegance", tagline: "Ihr Haar in besten Händen.", links: [{ label: "Instagram", href: "#" }, { label: "Impressum", href: "#" }], bgColor: "#1e1b2e", textColor: "#f9a8d4", showCopyright: true } },
+          ],
+          root: { props: {} },
+        },
+      },
+    ],
+  },
 ];
 
 export function applyTemplate(

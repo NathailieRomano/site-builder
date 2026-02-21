@@ -47,6 +47,28 @@ export const themePresets: Record<string, Theme> = {
     borderRadius: "0.75rem",
     spacing: "1.25rem",
   },
+  verein: {
+    primaryColor: "#059669",
+    secondaryColor: "#10b981",
+    accentColor: "#fbbf24",
+    backgroundColor: "#ffffff",
+    textColor: "#1e293b",
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+    headingFont: "'Montserrat', system-ui, sans-serif",
+    borderRadius: "0.5rem",
+    spacing: "1rem",
+  },
+  coiffeur: {
+    primaryColor: "#be185d",
+    secondaryColor: "#ec4899",
+    accentColor: "#f9a8d4",
+    backgroundColor: "#fdf2f8",
+    textColor: "#1e1b2e",
+    fontFamily: "'Poppins', system-ui, sans-serif",
+    headingFont: "'Playfair Display', Georgia, serif",
+    borderRadius: "0.75rem",
+    spacing: "1rem",
+  },
 };
 
 export function themeToCssVars(theme: Theme): Record<string, string> {

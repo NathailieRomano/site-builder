@@ -78,8 +78,12 @@ export const ImageBlockConfig = {
   label: "Bild",
   fields: {
     src: {
-      type: "text" as const,
-      label: "Bild URL",
+      type: "custom" as const,
+      label: "Bild",
+      render: ({ value, onChange, field }: { value: string; onChange: (v: string) => void; field: { label: string } }) => {
+        const { ImageField } = require("@/components/fields/ImageField");
+        return ImageField({ value, onChange, field });
+      },
     },
     alt: {
       type: "text" as const,

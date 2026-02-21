@@ -254,6 +254,9 @@ export default function EditorPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            <span className="text-xs text-zinc-600 hidden lg:inline" title="Undo: Ctrl+Z / Redo: Ctrl+Y">
+              ↩ Ctrl+Z &nbsp; ↪ Ctrl+Y
+            </span>
             {saved && (
               <span className="text-xs text-emerald-400 flex items-center gap-1">
                 ✓ Gespeichert

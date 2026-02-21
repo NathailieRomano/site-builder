@@ -21,9 +21,29 @@ export function ContactForm({
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
 
-  function handleSubmit(e: React.FormEvent) {
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, message: form.message }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Fehler beim Senden");
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Fehler beim Senden. Bitte versuchen Sie es erneut.");
+    } finally {
+      setSending(false);
+    }
   }
 
   const inputStyles: React.CSSProperties = {
@@ -147,15 +167,20 @@ export function ContactForm({
               />
             </div>
 
+            {error && (
+              <p className="text-sm text-red-500 text-center">{error}</p>
+            )}
+
             <button
               type="submit"
-              className="w-full py-4 font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.01] focus:outline-none focus:ring-4"
+              disabled={sending}
+              className="w-full py-4 font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.01] focus:outline-none focus:ring-4 disabled:opacity-50"
               style={{
                 backgroundColor: "var(--theme-primary)",
                 borderRadius: "var(--theme-radius)",
               }}
             >
-              {buttonText}
+              {sending ? "Wird gesendet..." : buttonText}
             </button>
           </form>
         )}
