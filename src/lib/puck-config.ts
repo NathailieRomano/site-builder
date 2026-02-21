@@ -19,6 +19,8 @@ import { SocialLinksConfig } from "@/components/blocks/SocialLinks";
 import { OpeningHoursConfig } from "@/components/blocks/OpeningHours";
 import { GoogleMapConfig } from "@/components/blocks/GoogleMap";
 import { IconBlockConfig } from "@/components/blocks/IconBlock";
+import { FormBuilderConfig } from "@/components/blocks/FormBuilder";
+import { ColumnsConfig } from "@/components/blocks/Columns";
 
 // Blocks that should NOT get animation controls (structural elements)
 const noAnimateBlocks = new Set(["Navigation", "Footer", "Spacer", "Divider"]);
@@ -66,6 +68,8 @@ const rawComponents: Record<string, unknown> = {
   OpeningHours: OpeningHoursConfig,
   GoogleMap: GoogleMapConfig,
   Icon: IconBlockConfig,
+  FormBuilder: FormBuilderConfig,
+  Columns: ColumnsConfig,
   Spacer: SpacerConfig,
   Divider: DividerConfig,
 };

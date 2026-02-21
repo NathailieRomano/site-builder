@@ -19,6 +19,8 @@ import { ThemePanel } from "@/components/editor/ThemePanel";
 import { PageManager } from "@/components/editor/PageManager";
 import { SeoPanel } from "@/components/editor/SeoPanel";
 import { WhiteLabelPanel } from "@/components/editor/WhiteLabelPanel";
+import { VersionPanel } from "@/components/editor/VersionPanel";
+import { saveVersion } from "@/lib/versioning";
 import { saveCloudProject } from "@/lib/cloud-storage";
 import { supabase } from "@/lib/supabase";
 import type { SiteProject, PageSeo, WhiteLabelSettings } from "@/types";
@@ -63,6 +65,7 @@ export default function EditorPage() {
     if (!project) return;
     const localTimer = setInterval(() => {
       saveProject(project);
+      saveVersion(project); // Auto-snapshot (throttled to 60s internally)
     }, 5000);
     const cloudTimer = setInterval(async () => {
       if (!isLoggedIn || !cloudId) return;
@@ -232,15 +235,26 @@ export default function EditorPage() {
                 }}
               />
             ) : (
-              <WhiteLabelPanel
-                settings={project?.whiteLabel || { enabled: false, customBrand: "", hidePoweredBy: false }}
-                onChange={(wl: WhiteLabelSettings) => {
-                  if (!project) return;
-                  const updated = { ...project, whiteLabel: wl, updatedAt: new Date().toISOString() };
-                  saveProject(updated);
-                  setProject(updated);
-                }}
-              />
+              <div className="space-y-6">
+                <VersionPanel
+                  project={project}
+                  onRestore={(restored) => {
+                    saveProject(restored);
+                    setProject(restored);
+                  }}
+                />
+                <div className="border-t border-zinc-800 pt-4">
+                  <WhiteLabelPanel
+                    settings={project?.whiteLabel || { enabled: false, customBrand: "", hidePoweredBy: false }}
+                    onChange={(wl: WhiteLabelSettings) => {
+                      if (!project) return;
+                      const updated = { ...project, whiteLabel: wl, updatedAt: new Date().toISOString() };
+                      saveProject(updated);
+                      setProject(updated);
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </div>
 
