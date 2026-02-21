@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@puckeditor/core/puck.css";
 
 /* ── Theme CSS Variables ─────────────────────────────────────────────────── */
 :root {
@@ -73,5 +74,4 @@ body {
   outline-offset: 2px;
 }
 
-/* ── Puck CSS ─────────────────────────────────────────────────────────────── */
-@import "@measured/puck/puck.css";
+/* Puck CSS imported at top of file */

@@ -1,4 +1,4 @@
-import { Config } from "@measured/puck";
+import { Config } from "@puckeditor/core";
 import { HeroConfig } from "@/components/blocks/Hero";
 import { TextBlockConfig } from "@/components/blocks/TextBlock";
 import { ImageBlockConfig } from "@/components/blocks/ImageBlock";

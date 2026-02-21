@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Puck } from "@measured/puck";
+import { Puck } from "@puckeditor/core";
 import Link from "next/link";
 import { puckConfig } from "@/lib/puck-config";
 import {
