@@ -17,9 +17,10 @@ import { exportProjectAsZip } from "@/lib/export";
 import { applyThemeToRoot } from "@/lib/theme";
 import { ThemePanel } from "@/components/editor/ThemePanel";
 import { PageManager } from "@/components/editor/PageManager";
-import type { SiteProject } from "@/types";
+import { SeoPanel } from "@/components/editor/SeoPanel";
+import type { SiteProject, PageSeo } from "@/types";
 
-type SidebarTab = "pages" | "theme";
+type SidebarTab = "pages" | "theme" | "seo";
 
 export default function EditorPage() {
   const [project, setProject] = useState<SiteProject | null>(null);
@@ -150,7 +151,7 @@ export default function EditorPage() {
 
           {/* Tab Switcher */}
           <div className="flex border-b border-white/5">
-            {(["pages", "theme"] as SidebarTab[]).map((tab) => (
+            {(["pages", "theme", "seo"] as SidebarTab[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -160,7 +161,7 @@ export default function EditorPage() {
                     : "text-zinc-500 hover:text-zinc-400"
                 }`}
               >
-                {tab === "pages" ? "📄 Seiten" : "🎨 Theme"}
+                {tab === "pages" ? "📄" : tab === "theme" ? "🎨" : "🔍"} {tab === "pages" ? "Seiten" : tab === "theme" ? "Theme" : "SEO"}
               </button>
             ))}
           </div>
@@ -175,10 +176,24 @@ export default function EditorPage() {
                 onRemovePage={handleRemovePage}
                 onRenamePage={handleRenamePage}
               />
-            ) : (
+            ) : activeTab === "theme" ? (
               <ThemePanel
                 theme={project.theme}
                 onChange={handleThemeChange}
+              />
+            ) : (
+              <SeoPanel
+                pageName={activePage?.name || ""}
+                seo={activePage?.seo || { title: "", description: "", ogImage: "" }}
+                onChange={(seo: PageSeo) => {
+                  if (!project || !activePage) return;
+                  const updatedPages = project.pages.map((p) =>
+                    p.id === activePage.id ? { ...p, seo } : p
+                  );
+                  const updated = { ...project, pages: updatedPages, updatedAt: new Date().toISOString() };
+                  saveProject(updated);
+                  setProject(updated);
+                }}
               />
             )}
           </div>

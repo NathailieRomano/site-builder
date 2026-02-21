@@ -10,6 +10,11 @@ import { DividerConfig } from "@/components/blocks/Divider";
 import { TestimonialsConfig } from "@/components/blocks/Testimonials";
 import { FAQConfig } from "@/components/blocks/FAQ";
 import { VideoEmbedConfig } from "@/components/blocks/VideoEmbed";
+import { NavigationConfig } from "@/components/blocks/Navigation";
+import { FooterConfig } from "@/components/blocks/Footer";
+import { SocialLinksConfig } from "@/components/blocks/SocialLinks";
+import { OpeningHoursConfig } from "@/components/blocks/OpeningHours";
+import { GoogleMapConfig } from "@/components/blocks/GoogleMap";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const puckConfig: Config<any> = {
@@ -23,6 +28,11 @@ export const puckConfig: Config<any> = {
     Testimonials: TestimonialsConfig as any,
     FAQ: FAQConfig as any,
     Video: VideoEmbedConfig as any,
+    Navigation: NavigationConfig as any,
+    Footer: FooterConfig as any,
+    SocialLinks: SocialLinksConfig as any,
+    OpeningHours: OpeningHoursConfig as any,
+    GoogleMap: GoogleMapConfig as any,
     Spacer: SpacerConfig as any,
     Divider: DividerConfig as any,
   },

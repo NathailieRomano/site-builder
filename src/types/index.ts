@@ -14,11 +14,18 @@ export interface Theme {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+export interface PageSeo {
+  title: string;
+  description: string;
+  ogImage: string;
+}
+
 export interface Page {
   id: string;
   name: string;
   slug: string;
   data: Record<string, unknown>;
+  seo?: PageSeo;
 }
 
 // ─── Project ──────────────────────────────────────────────────────────────────

@@ -36,7 +36,11 @@ function generatePageHtml(project: SiteProject, pageIndex: number): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${page.name} — ${project.name}</title>
+  <title>${page.seo?.title || page.name} — ${project.name}</title>
+  ${page.seo?.description ? `<meta name="description" content="${page.seo.description}">` : ""}
+  ${page.seo?.title ? `<meta property="og:title" content="${page.seo.title}">` : ""}
+  ${page.seo?.description ? `<meta property="og:description" content="${page.seo.description}">` : ""}
+  ${page.seo?.ogImage ? `<meta property="og:image" content="${page.seo.ogImage}">` : ""}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Playfair+Display:wght@400;600;700&family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -201,6 +205,63 @@ function renderBlocksToHtml(data: any, theme: SiteProject["theme"]): string {
 </section>`;
         }
 
+        case "Navigation": {
+          const navLinks = (p.links as { label: string; href: string }[]) || [];
+          return `<header style="background:${p.bgColor || "#fff"};color:${p.textColor || "#0f172a"};${p.sticky ? "position:sticky;top:0;z-index:50;" : ""}">
+  <div style="max-width:1200px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:1.125rem;font-weight:700;font-family:${theme.headingFont};">${p.logo || "Logo"}</span>
+    <nav style="display:flex;gap:24px;">
+      ${navLinks.map((l) => `<a href="${l.href}" style="color:${p.textColor || "#0f172a"};text-decoration:none;font-size:14px;font-weight:500;">${l.label}</a>`).join("\n      ")}
+    </nav>
+  </div>
+</header>`;
+        }
+
+        case "Footer": {
+          const footerLinks = (p.links as { label: string; href: string }[]) || [];
+          return `<footer style="background:${p.bgColor || "#0f172a"};color:${p.textColor || "#e2e8f0"};padding:48px 24px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:start;gap:24px;">
+    <div>
+      <p style="font-size:1.125rem;font-weight:700;font-family:${theme.headingFont};">${p.companyName || ""}</p>
+      ${p.tagline ? `<p style="font-size:0.875rem;margin-top:4px;opacity:0.6;">${p.tagline}</p>` : ""}
+    </div>
+    <nav style="display:flex;flex-wrap:wrap;gap:24px;">
+      ${footerLinks.map((l) => `<a href="${l.href}" style="color:${p.textColor || "#e2e8f0"};text-decoration:none;font-size:0.875rem;">${l.label}</a>`).join("\n      ")}
+    </nav>
+  </div>
+  ${p.showCopyright ? `<div style="max-width:1200px;margin:32px auto 0;padding-top:24px;border-top:1px solid ${p.textColor || "#e2e8f0"}20;font-size:0.75rem;opacity:0.5;">© ${new Date().getFullYear()} ${p.companyName}. Alle Rechte vorbehalten.</div>` : ""}
+</footer>`;
+        }
+
+        case "SocialLinks": {
+          const socials = (p.links as { platform: string; url: string }[]) || [];
+          const icons: Record<string, string> = { facebook: "📘", instagram: "📸", twitter: "🐦", linkedin: "💼", youtube: "▶️", tiktok: "🎵", email: "📧", website: "🌐", whatsapp: "💬", telegram: "✈️" };
+          return `<section style="padding:32px 24px;text-align:${p.align || "center"};">
+  <div style="max-width:800px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;justify-content:${p.align || "center"};">
+    ${socials.map((s) => `<a href="${s.platform === "email" ? "mailto:" + s.url : s.url}" target="${s.platform === "email" ? "_self" : "_blank"}" rel="noopener" style="font-size:${p.size === "large" ? "2rem" : p.size === "small" ? "1.25rem" : "1.5rem"};text-decoration:none;">${icons[s.platform] || "🔗"}</a>`).join("\n    ")}
+  </div>
+</section>`;
+        }
+
+        case "OpeningHours": {
+          const hours = (p.days as { day: string; hours: string }[]) || [];
+          return `<section class="section">
+  <div style="max-width:480px;margin:0 auto;">
+    ${p.heading ? `<h2 style="font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:32px;font-family:${theme.headingFont};">${p.heading}</h2>` : ""}
+    ${hours.map((d) => `<div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f3f4f6;"><span>${d.day}</span><span${d.hours.toLowerCase() === "geschlossen" ? ' style="opacity:0.4;"' : ""}>${d.hours}</span></div>`).join("\n    ")}
+    ${p.note ? `<p style="margin-top:24px;text-align:center;font-size:0.875rem;opacity:0.6;">${p.note}</p>` : ""}
+  </div>
+</section>`;
+        }
+
+        case "GoogleMap":
+          return `<section class="section">
+  <div style="max-width:800px;margin:0 auto;">
+    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent((p.address as string) || "Bern")}" width="100%" height="${p.height === "small" ? "250" : p.height === "large" ? "550" : "400"}" style="border:0;${p.rounded ? "border-radius:16px;" : ""}" allowfullscreen loading="lazy"></iframe>
+    ${p.caption ? `<p style="margin-top:12px;text-align:center;font-size:0.875rem;opacity:0.6;">${p.caption}</p>` : ""}
+  </div>
+</section>`;
+
         case "Spacer":
           return `<div style="height:${p.height || "64"}px;"></div>`;
 
@@ -241,10 +302,43 @@ export async function exportProjectAsZip(project: SiteProject): Promise<Blob> {
     zip.file(filename, html);
   });
 
-  // Add a readme
+  // Add a readme with hosting instructions
   zip.file(
     "README.md",
-    `# ${project.name}\n\nExportiert am ${new Date().toLocaleDateString("de-DE")} mit Site Builder.\n\nÖffne index.html in deinem Browser oder lade die Dateien auf deinen Webhost hoch.\n`
+    `# ${project.name}
+
+Exportiert am ${new Date().toLocaleDateString("de-DE")} mit Site Builder.
+
+## 🚀 Installation
+
+1. Lade alle Dateien auf deinen Webhost hoch (z.B. Hostpoint, cyon, Infomaniak)
+2. Öffne deine Domain — fertig!
+
+## 📧 Kontaktformular einrichten
+
+Das Kontaktformular benötigt einen Formular-Service. Empfohlen:
+
+### Option 1: Formspree (einfachste)
+1. Gehe zu https://formspree.io und erstelle einen Account
+2. Erstelle ein neues Formular und kopiere deine Formular-ID
+3. Ändere in der HTML-Datei das form-Tag zu:
+   <form action="https://formspree.io/f/DEINE-ID" method="POST">
+
+### Option 2: Web3Forms (keine Registrierung)
+1. Gehe zu https://web3forms.com
+2. Gib deine E-Mail ein und kopiere den Access Key
+3. Füge ein Hidden-Feld ins Formular ein:
+   <input type="hidden" name="access_key" value="DEIN-KEY">
+4. Ändere das form-Tag zu:
+   <form action="https://api.web3forms.com/submit" method="POST">
+
+## Dateien
+
+` + project.pages.map((p, i) => "- " + (i === 0 ? "index.html" : p.slug.replace(/^\//, "") + ".html") + " — " + p.name).join("\n") + `
+
+---
+Erstellt mit Site Builder · romano.studio
+`
   );
 
   return zip.generateAsync({ type: "blob" });
