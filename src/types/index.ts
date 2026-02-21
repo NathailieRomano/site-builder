@@ -36,6 +36,17 @@ export interface WhiteLabelSettings {
   hidePoweredBy: boolean;
 }
 
+export interface AnalyticsSettings {
+  provider: "none" | "plausible" | "umami" | "google";
+  siteId: string;
+  scriptUrl: string;
+}
+
+export interface DomainSettings {
+  customDomain: string;
+  subdomain: string;
+}
+
 export interface SiteProject {
   id: string;
   name: string;
@@ -43,6 +54,8 @@ export interface SiteProject {
   pages: Page[];
   activePageId: string;
   whiteLabel?: WhiteLabelSettings;
+  analytics?: AnalyticsSettings;
+  domain?: DomainSettings;
   createdAt: string;
   updatedAt: string;
 }

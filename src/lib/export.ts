@@ -1,5 +1,6 @@
 import type { SiteProject } from "@/types";
 import { themeToCssVars } from "./theme";
+import { getAnalyticsScript } from "@/components/editor/AnalyticsPanel";
 
 /**
  * Generates a standalone HTML page for a single page of the project.
@@ -41,6 +42,7 @@ function generatePageHtml(project: SiteProject, pageIndex: number): string {
   ${page.seo?.title ? `<meta property="og:title" content="${page.seo.title}">` : ""}
   ${page.seo?.description ? `<meta property="og:description" content="${page.seo.description}">` : ""}
   ${page.seo?.ogImage ? `<meta property="og:image" content="${page.seo.ogImage}">` : ""}
+  ${getAnalyticsScript(project.analytics)}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Playfair+Display:wght@400;600;700&family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">

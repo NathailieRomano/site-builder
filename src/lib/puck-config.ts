@@ -21,6 +21,8 @@ import { GoogleMapConfig } from "@/components/blocks/GoogleMap";
 import { IconBlockConfig } from "@/components/blocks/IconBlock";
 import { FormBuilderConfig } from "@/components/blocks/FormBuilder";
 import { ColumnsConfig } from "@/components/blocks/Columns";
+import { BlogListConfig } from "@/components/blocks/BlogList";
+import { LanguageSwitcherConfig } from "@/components/blocks/LanguageSwitcher";
 
 // Blocks that should NOT get animation controls (structural elements)
 const noAnimateBlocks = new Set(["Navigation", "Footer", "Spacer", "Divider"]);
@@ -70,6 +72,8 @@ const rawComponents: Record<string, unknown> = {
   Icon: IconBlockConfig,
   FormBuilder: FormBuilderConfig,
   Columns: ColumnsConfig,
+  BlogList: BlogListConfig,
+  LanguageSwitcher: LanguageSwitcherConfig,
   Spacer: SpacerConfig,
   Divider: DividerConfig,
 };

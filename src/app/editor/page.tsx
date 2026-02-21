@@ -20,7 +20,10 @@ import { PageManager } from "@/components/editor/PageManager";
 import { SeoPanel } from "@/components/editor/SeoPanel";
 import { WhiteLabelPanel } from "@/components/editor/WhiteLabelPanel";
 import { VersionPanel } from "@/components/editor/VersionPanel";
+import { AnalyticsPanel } from "@/components/editor/AnalyticsPanel";
+import { DomainPanel } from "@/components/editor/DomainPanel";
 import { saveVersion } from "@/lib/versioning";
+import type { AnalyticsSettings, DomainSettings } from "@/types";
 import { saveCloudProject } from "@/lib/cloud-storage";
 import { supabase } from "@/lib/supabase";
 import type { SiteProject, PageSeo, WhiteLabelSettings } from "@/types";
@@ -243,6 +246,29 @@ export default function EditorPage() {
                     setProject(restored);
                   }}
                 />
+                <div className="border-t border-zinc-800 pt-4">
+                  <AnalyticsPanel
+                    settings={project?.analytics || { provider: "none", siteId: "", scriptUrl: "" }}
+                    onChange={(a: AnalyticsSettings) => {
+                      if (!project) return;
+                      const updated = { ...project, analytics: a, updatedAt: new Date().toISOString() };
+                      saveProject(updated);
+                      setProject(updated);
+                    }}
+                  />
+                </div>
+                <div className="border-t border-zinc-800 pt-4">
+                  <DomainPanel
+                    settings={project?.domain || { customDomain: "", subdomain: "" }}
+                    onChange={(d: DomainSettings) => {
+                      if (!project) return;
+                      const updated = { ...project, domain: d, updatedAt: new Date().toISOString() };
+                      saveProject(updated);
+                      setProject(updated);
+                    }}
+                    isPublished={false}
+                  />
+                </div>
                 <div className="border-t border-zinc-800 pt-4">
                   <WhiteLabelPanel
                     settings={project?.whiteLabel || { enabled: false, customBrand: "", hidePoweredBy: false }}
