@@ -7,6 +7,9 @@ import { CTAButtonConfig } from "@/components/blocks/CTAButton";
 import { ContactFormConfig } from "@/components/blocks/ContactForm";
 import { SpacerConfig } from "@/components/blocks/Spacer";
 import { DividerConfig } from "@/components/blocks/Divider";
+import { TestimonialsConfig } from "@/components/blocks/Testimonials";
+import { FAQConfig } from "@/components/blocks/FAQ";
+import { VideoEmbedConfig } from "@/components/blocks/VideoEmbed";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const puckConfig: Config<any> = {
@@ -17,6 +20,9 @@ export const puckConfig: Config<any> = {
     Gallery: GalleryConfig as any,
     CTAButton: CTAButtonConfig as any,
     ContactForm: ContactFormConfig as any,
+    Testimonials: TestimonialsConfig as any,
+    FAQ: FAQConfig as any,
+    Video: VideoEmbedConfig as any,
     Spacer: SpacerConfig as any,
     Divider: DividerConfig as any,
   },

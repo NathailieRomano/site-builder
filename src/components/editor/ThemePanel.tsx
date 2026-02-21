@@ -13,6 +13,9 @@ const fontOptions = [
   { value: "'Roboto', system-ui, sans-serif", label: "Roboto (Clean)" },
   { value: "'DM Sans', system-ui, sans-serif", label: "DM Sans (Friendly)" },
   { value: "'Lato', 'Helvetica Neue', sans-serif", label: "Lato (Classic)" },
+  { value: "'Poppins', system-ui, sans-serif", label: "Poppins (Trendy)" },
+  { value: "'Montserrat', system-ui, sans-serif", label: "Montserrat (Bold)" },
+  { value: "'Open Sans', system-ui, sans-serif", label: "Open Sans (Neutral)" },
   { value: "Georgia, 'Times New Roman', serif", label: "Georgia (Serif)" },
   { value: "'Playfair Display', Georgia, serif", label: "Playfair (Elegant)" },
 ];

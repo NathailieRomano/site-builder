@@ -6,6 +6,7 @@ import Link from "next/link";
 import { puckConfig } from "@/lib/puck-config";
 import { loadProject } from "@/lib/storage";
 import { applyThemeToRoot, themeToCssVars } from "@/lib/theme";
+import { CookieBanner } from "@/components/CookieBanner";
 import type { SiteProject, Page } from "@/types";
 
 export default function PreviewPage() {
@@ -113,6 +114,8 @@ export default function PreviewPage() {
           data={activePage.data as Parameters<typeof Render>[0]["data"]}
         />
       </div>
+
+      <CookieBanner />
     </div>
   );
 }
