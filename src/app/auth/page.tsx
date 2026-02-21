@@ -97,6 +97,25 @@ export default function AuthPage() {
               />
             </div>
 
+            {mode === "login" && (
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!email) { setError("Bitte E-Mail eingeben"); return; }
+                  setLoading(true);
+                  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/auth`,
+                  });
+                  setLoading(false);
+                  if (error) setError(error.message);
+                  else setSuccess("Passwort-Reset E-Mail wurde gesendet!");
+                }}
+                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors text-right w-full"
+              >
+                Passwort vergessen?
+              </button>
+            )}
+
             {error && (
               <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-xs text-red-400">
                 {error}
