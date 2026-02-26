@@ -259,7 +259,7 @@ function renderBlocksToHtml(data: any, theme: SiteProject["theme"]): string {
         case "GoogleMap":
           return `<section class="section">
   <div style="max-width:800px;margin:0 auto;">
-    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent((p.address as string) || "Bern")}" width="100%" height="${p.height === "small" ? "250" : p.height === "large" ? "550" : "400"}" style="border:0;${p.rounded ? "border-radius:16px;" : ""}" allowfullscreen loading="lazy"></iframe>
+    <iframe src="https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY || ""}&q=${encodeURIComponent((p.address as string) || "Bern")}" width="100%" height="${p.height === "small" ? "250" : p.height === "large" ? "550" : "400"}" style="border:0;${p.rounded ? "border-radius:16px;" : ""}" allowfullscreen loading="lazy"></iframe>
     ${p.caption ? `<p style="margin-top:12px;text-align:center;font-size:0.875rem;opacity:0.6;">${p.caption}</p>` : ""}
   </div>
 </section>`;

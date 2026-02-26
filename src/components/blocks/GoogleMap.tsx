@@ -10,7 +10,7 @@ interface GoogleMapProps {
 }
 
 function getMapEmbedUrl(address: string): string {
-  return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(address)}`;
+  return `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY || ""}&q=${encodeURIComponent(address)}`;
   // Note: This is Google's public embed key, works for basic embeds
 }
 
