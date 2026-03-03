@@ -121,9 +121,9 @@ export default function EditorPage() {
   );
 
   const handleAddPage = useCallback(
-    (name: string, slug: string) => {
+    (name: string, slug: string, options?: { htmlApp?: boolean }) => {
       if (!project) return;
-      const updated = addPage(project, name, slug);
+      const updated = addPage(project, name, slug, options);
       saveProject(updated);
       setProject(updated);
     },
