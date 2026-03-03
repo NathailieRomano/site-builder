@@ -25,6 +25,7 @@ export interface Page {
   name: string;
   slug: string;
   data: Record<string, unknown>;
+  htmlContent?: string;
   seo?: PageSeo;
 }
 

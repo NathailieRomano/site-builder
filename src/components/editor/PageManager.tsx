@@ -6,7 +6,7 @@ import type { Page, SiteProject } from "@/types";
 interface PageManagerProps {
   project: SiteProject;
   onSelectPage: (pageId: string) => void;
-  onAddPage: (name: string, slug: string) => void;
+  onAddPage: (name: string, slug: string, options?: { htmlApp?: boolean }) => void;
   onRemovePage: (pageId: string) => void;
   onRenamePage: (pageId: string, name: string) => void;
 }
@@ -21,15 +21,17 @@ export function PageManager({
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
   const [newSlug, setNewSlug] = useState("");
+  const [newPageType, setNewPageType] = useState<"puck" | "html-app">("puck");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
 
   function handleAdd() {
     if (!newName.trim()) return;
     const slug = newSlug.trim() || "/" + newName.toLowerCase().replace(/\s+/g, "-");
-    onAddPage(newName.trim(), slug);
+    onAddPage(newName.trim(), slug, { htmlApp: newPageType === "html-app" });
     setNewName("");
     setNewSlug("");
+    setNewPageType("puck");
     setAdding(false);
   }
 
@@ -61,7 +63,7 @@ export function PageManager({
           }`}
           onClick={() => onSelectPage(page.id)}
         >
-          <span className="text-xs">📄</span>
+          <span className="text-xs">{page.htmlContent !== undefined ? "🖥️" : "📄"}</span>
           {editingId === page.id ? (
             <input
               autoFocus
@@ -119,6 +121,30 @@ export function PageManager({
             placeholder="URL-Pfad (z.B. /ueber-uns)"
             className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
           />
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setNewPageType("puck")}
+              className={`rounded-lg border px-3 py-2 text-xs transition-colors ${
+                newPageType === "puck"
+                  ? "border-indigo-500 bg-indigo-500/10 text-indigo-300"
+                  : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Normale Seite
+            </button>
+            <button
+              type="button"
+              onClick={() => setNewPageType("html-app")}
+              className={`rounded-lg border px-3 py-2 text-xs transition-colors ${
+                newPageType === "html-app"
+                  ? "border-indigo-500 bg-indigo-500/10 text-indigo-300"
+                  : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Neue HTML-App Seite
+            </button>
+          </div>
           <div className="flex gap-2">
             <button
               onClick={handleAdd}

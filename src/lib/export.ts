@@ -300,8 +300,13 @@ export async function exportProjectAsZip(project: SiteProject): Promise<Blob> {
   // Generate HTML for each page
   project.pages.forEach((page, i) => {
     const filename = i === 0 ? "index.html" : page.slug.replace(/^\//, "") + ".html";
-    const html = generatePageHtml(project, i);
-    zip.file(filename, html);
+    // HTML App pages: export raw HTML content as-is
+    if (page.htmlContent !== undefined) {
+      zip.file(filename, page.htmlContent);
+    } else {
+      const html = generatePageHtml(project, i);
+      zip.file(filename, html);
+    }
   });
 
   // Add a readme with hosting instructions

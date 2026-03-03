@@ -20,7 +20,16 @@ export default function PreviewPage() {
     const p = loadProject();
     if (p) {
       setProject(p);
-      const page = p.pages.find((pg) => pg.id === p.activePageId) || p.pages[0];
+      // Check for ?page=slug param (used for HTML app pages opened in new tab)
+      const params = new URLSearchParams(window.location.search);
+      const pageSlug = params.get("page");
+      let page: Page | undefined;
+      if (pageSlug) {
+        page = p.pages.find((pg) => pg.slug === pageSlug || pg.slug === "/" + pageSlug.replace(/^\//, ""));
+      }
+      if (!page) {
+        page = p.pages.find((pg) => pg.id === p.activePageId) || p.pages[0];
+      }
       setActivePage(page);
       applyThemeToRoot(p.theme);
     }
@@ -40,6 +49,48 @@ export default function PreviewPage() {
             Zum Editor →
           </Link>
         </div>
+      </div>
+    );
+  }
+
+  // HTML App pages: render as fullscreen iframe
+  if (activePage.htmlContent !== undefined) {
+    return (
+      <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+        {showNav && (
+          <div className="flex items-center justify-between bg-zinc-900/95 backdrop-blur-sm px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <Link
+                href="/editor"
+                className="flex items-center gap-1.5 rounded-md bg-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-600 transition-colors"
+              >
+                ← Editor
+              </Link>
+              <span className="text-xs text-zinc-500">HTML-App</span>
+              <span className="text-xs font-medium text-zinc-300">{activePage.name}</span>
+            </div>
+            <button
+              onClick={() => setShowNav(false)}
+              className="rounded-md p-1.5 text-zinc-500 hover:text-zinc-300 transition-colors text-xs"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+        {!showNav && (
+          <button
+            onClick={() => setShowNav(true)}
+            className="fixed top-4 right-4 z-50 rounded-full bg-zinc-900/80 backdrop-blur-sm px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 transition-colors border border-white/10"
+          >
+            Editor-Leiste anzeigen
+          </button>
+        )}
+        <iframe
+          srcDoc={activePage.htmlContent}
+          className="flex-1 w-full border-none bg-white"
+          sandbox="allow-scripts allow-same-origin"
+          title={activePage.name}
+        />
       </div>
     );
   }
@@ -66,17 +117,29 @@ export default function PreviewPage() {
           {project.pages.length > 1 && (
             <nav className="flex items-center gap-1">
               {project.pages.map((page) => (
-                <button
-                  key={page.id}
-                  onClick={() => setActivePage(page)}
-                  className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
-                    activePage.id === page.id
-                      ? "bg-indigo-600 text-white"
-                      : "text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
-                  }`}
-                >
-                  {page.name}
-                </button>
+                page.htmlContent !== undefined ? (
+                  <a
+                    key={page.id}
+                    href={`/preview?page=${page.slug.replace(/^\//, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-md px-3 py-1.5 text-xs transition-colors text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 flex items-center gap-1"
+                  >
+                    🖥️ {page.name}
+                  </a>
+                ) : (
+                  <button
+                    key={page.id}
+                    onClick={() => setActivePage(page)}
+                    className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
+                      activePage.id === page.id
+                        ? "bg-indigo-600 text-white"
+                        : "text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
+                    }`}
+                  >
+                    {page.name}
+                  </button>
+                )
               ))}
             </nav>
           )}

@@ -27,6 +27,7 @@ import type { AnalyticsSettings, DomainSettings } from "@/types";
 import { saveCloudProject } from "@/lib/cloud-storage";
 import { supabase } from "@/lib/supabase";
 import type { SiteProject, PageSeo, WhiteLabelSettings } from "@/types";
+import { HtmlAppEditor } from "@/components/editor/HtmlAppEditor";
 
 type SidebarTab = "pages" | "theme" | "seo" | "settings";
 
@@ -158,6 +159,25 @@ export default function EditorPage() {
     },
     [project]
   );
+
+  const handleHtmlContentChange = useCallback(
+    (html: string) => {
+      if (!project || !activePage) return;
+      const updatedPages = project.pages.map((p) =>
+        p.id === activePage.id ? { ...p, htmlContent: html } : p
+      );
+      const updated = { ...project, pages: updatedPages, updatedAt: new Date().toISOString() };
+      setProject(updated);
+    },
+    [project, activePage]
+  );
+
+  const handleHtmlSave = useCallback(() => {
+    if (!project) return;
+    saveProject(project);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  }, [project]);
 
   if (!project || !activePage) {
     return (
@@ -401,15 +421,24 @@ export default function EditorPage() {
           </div>
         </div>
 
-        {/* Puck Editor */}
+        {/* Editor: Puck or HTML App */}
         <div className="flex-1 overflow-hidden">
-          <Puck
-            key={activePage.id}
-            config={puckConfig}
-            data={activePage.data as Parameters<typeof Puck>[0]["data"]}
-            onPublish={handlePublish}
-            onChange={handleChange}
-          />
+          {activePage.htmlContent !== undefined ? (
+            <HtmlAppEditor
+              key={activePage.id}
+              htmlContent={activePage.htmlContent}
+              onChange={handleHtmlContentChange}
+              onSave={handleHtmlSave}
+            />
+          ) : (
+            <Puck
+              key={activePage.id}
+              config={puckConfig}
+              data={activePage.data as Parameters<typeof Puck>[0]["data"]}
+              onPublish={handlePublish}
+              onChange={handleChange}
+            />
+          )}
         </div>
       </div>
     </div>

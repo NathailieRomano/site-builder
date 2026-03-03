@@ -67,13 +67,15 @@ export function updatePageData(
 export function addPage(
   project: SiteProject,
   name: string,
-  slug: string
+  slug: string,
+  options?: { htmlApp?: boolean }
 ): SiteProject {
   const newPage: Page = {
     id: generateId(),
     name,
     slug,
     data: { content: [], root: { props: {} } },
+    ...(options?.htmlApp ? { htmlContent: "" } : {}),
   };
   return {
     ...project,
