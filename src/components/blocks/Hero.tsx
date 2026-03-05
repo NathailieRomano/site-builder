@@ -12,6 +12,7 @@ interface HeroProps {
   bgImage?: string;
   textColor: string;
   height: "medium" | "large" | "fullscreen";
+  subtitleSize?: "small" | "medium" | "large";
 }
 
 const heightMap = {
@@ -29,7 +30,13 @@ export function Hero({
   bgImage,
   textColor,
   height = "large",
+  subtitleSize = "medium",
 }: HeroProps) {
+  const subtitleSizeMap = {
+    small: "text-base sm:text-lg",
+    medium: "text-xl sm:text-2xl",
+    large: "text-2xl sm:text-3xl",
+  };
   return (
     <section
       className={`relative flex items-center justify-center ${heightMap[height]} overflow-hidden`}
@@ -56,7 +63,7 @@ export function Hero({
         </h1>
         {subtitle && (
           <p
-            className="mx-auto mt-6 max-w-2xl text-xl leading-relaxed opacity-90 sm:text-2xl"
+            className={`mx-auto mt-6 max-w-2xl leading-relaxed opacity-90 ${subtitleSizeMap[subtitleSize]}`}
             style={{ color: textColor }}
           >
             {subtitle}
@@ -92,6 +99,15 @@ export const HeroConfig = {
     subtitle: {
       type: "textarea" as const,
       label: "Untertitel",
+    },
+    subtitleSize: {
+      type: "radio" as const,
+      label: "Untertitel-Grösse",
+      options: [
+        { value: "small", label: "Klein" },
+        { value: "medium", label: "Mittel" },
+        { value: "large", label: "Gross" },
+      ],
     },
     ctaText: {
       type: "text" as const,
@@ -137,6 +153,7 @@ export const HeroConfig = {
     bgImage: "",
     textColor: "#ffffff",
     height: "large" as const,
+    subtitleSize: "medium" as const,
   },
   render: Hero,
 };

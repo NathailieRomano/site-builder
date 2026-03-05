@@ -101,7 +101,7 @@ function renderBlocksToHtml(data: any, theme: SiteProject["theme"]): string {
           return `<section style="min-height:${p.height === "fullscreen" ? "100vh" : p.height === "large" ? "75vh" : "50vh"};display:flex;align-items:center;justify-content:center;background-color:${p.bgColor || "#0f172a"};${p.bgImage ? `background-image:url(${p.bgImage});background-size:cover;background-position:center;` : ""}color:${p.textColor || "#fff"};text-align:center;padding:96px 24px;">
   <div style="max-width:800px;">
     <h1 style="font-size:clamp(2rem,5vw,4rem);font-weight:700;font-family:${theme.headingFont};line-height:1.1;">${p.title || ""}</h1>
-    ${p.subtitle ? `<p style="margin-top:24px;font-size:1.25rem;opacity:0.9;">${p.subtitle}</p>` : ""}
+    ${p.subtitle ? `<p style="margin-top:24px;font-size:${p.subtitleSize === "small" ? "1rem" : p.subtitleSize === "large" ? "1.75rem" : "1.25rem"};opacity:0.9;">${p.subtitle}</p>` : ""}
     ${p.ctaText && p.ctaLink ? `<div style="margin-top:40px;"><a href="${p.ctaLink}" class="btn" style="background:${theme.primaryColor};color:#fff;">${p.ctaText}</a></div>` : ""}
   </div>
 </section>`;
