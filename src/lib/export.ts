@@ -208,12 +208,12 @@ function renderBlocksToHtml(data: any, theme: SiteProject["theme"]): string {
         }
 
         case "Navigation": {
-          const navLinks = (p.links as { label: string; href: string }[]) || [];
+          const navLinks = (p.links as { label: string; href: string; newTab?: boolean }[]) || [];
           return `<header style="background:${p.bgColor || "#fff"};color:${p.textColor || "#0f172a"};${p.sticky ? "position:sticky;top:0;z-index:50;" : ""}">
   <div style="max-width:1200px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
     <span style="font-size:1.125rem;font-weight:700;font-family:${theme.headingFont};">${p.logo || "Logo"}</span>
     <nav style="display:flex;gap:24px;">
-      ${navLinks.map((l) => `<a href="${l.href}" style="color:${p.textColor || "#0f172a"};text-decoration:none;font-size:14px;font-weight:500;">${l.label}</a>`).join("\n      ")}
+      ${navLinks.map((l) => `<a href="${l.href}"${l.newTab ? ' target="_blank" rel="noopener"' : ""} style="color:${p.textColor || "#0f172a"};text-decoration:none;font-size:14px;font-weight:500;">${l.label}</a>`).join("\n      ")}
     </nav>
   </div>
 </header>`;

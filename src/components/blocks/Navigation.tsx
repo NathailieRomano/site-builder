@@ -5,6 +5,7 @@ import React, { useState } from "react";
 interface NavLink {
   label: string;
   href: string;
+  newTab?: boolean;
 }
 
 interface NavigationProps {
@@ -43,6 +44,7 @@ export function Navigation({ logo, links, bgColor, textColor, sticky, style = "m
               <a
                 key={i}
                 href={link.href}
+                {...(link.newTab ? { target: "_blank", rel: "noopener" } : {})}
                 className="text-sm font-medium transition-opacity hover:opacity-70"
                 style={{ color: textColor }}
               >
@@ -68,6 +70,7 @@ export function Navigation({ logo, links, bgColor, textColor, sticky, style = "m
               <a
                 key={i}
                 href={link.href}
+                {...(link.newTab ? { target: "_blank", rel: "noopener" } : {})}
                 className="text-sm font-medium py-2"
                 style={{ color: textColor }}
                 onClick={() => setMobileOpen(false)}
@@ -92,6 +95,14 @@ export const NavigationConfig = {
       arrayFields: {
         label: { type: "text" as const, label: "Text" },
         href: { type: "text" as const, label: "Link (z.B. /ueber-uns oder #contact)" },
+        newTab: {
+          type: "radio" as const,
+          label: "Neuer Tab",
+          options: [
+            { value: false, label: "Nein" },
+            { value: true, label: "Ja (z.B. für HTML-Apps)" },
+          ],
+        },
       },
     },
     bgColor: { type: "text" as const, label: "Hintergrundfarbe" },
