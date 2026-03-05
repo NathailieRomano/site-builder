@@ -74,4 +74,9 @@ body {
   outline-offset: 2px;
 }
 
+/* Fix: bottom block cut off in Puck component list */
+[class*="Sidebar--left"] {
+  padding-bottom: 48px;
+}
+
 /* Puck CSS imported at top of file */

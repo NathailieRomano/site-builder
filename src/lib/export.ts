@@ -309,6 +309,18 @@ export async function exportProjectAsZip(project: SiteProject): Promise<Blob> {
     }
   });
 
+  // Add project.json for re-import
+  const projectData: Partial<SiteProject> = {
+    name: project.name,
+    theme: project.theme,
+    pages: project.pages,
+    activePageId: project.activePageId,
+    whiteLabel: project.whiteLabel,
+    analytics: project.analytics,
+    domain: project.domain,
+  };
+  zip.file("project.json", JSON.stringify(projectData, null, 2));
+
   // Add a readme with hosting instructions
   zip.file(
     "README.md",
@@ -349,4 +361,61 @@ Erstellt mit Site Builder · romano.studio
   );
 
   return zip.generateAsync({ type: "blob" });
+}
+
+/**
+ * Import a project from a ZIP file that contains project.json.
+ * Returns a SiteProject with fresh UUIDs.
+ */
+export async function importProjectFromZip(file: File): Promise<SiteProject> {
+  const JSZip = (await import("jszip")).default;
+  const zipData = await file.arrayBuffer();
+  const zip = await JSZip.loadAsync(zipData);
+
+  const projectFile = zip.file("project.json");
+  if (!projectFile) {
+    throw new Error(
+      "Diese ZIP-Datei enthält kein project.json. Nur ZIPs die mit dem Site Builder exportiert wurden können importiert werden."
+    );
+  }
+
+  const raw = await projectFile.async("string");
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error("project.json ist ungültig (kein gültiges JSON).");
+  }
+
+  // Validate required fields
+  if (!parsed.name || typeof parsed.name !== "string") {
+    throw new Error("project.json fehlt das Feld 'name'.");
+  }
+  if (!Array.isArray(parsed.pages) || parsed.pages.length === 0) {
+    throw new Error("project.json enthält keine Seiten.");
+  }
+  if (!parsed.theme || typeof parsed.theme !== "object") {
+    throw new Error("project.json fehlt das Feld 'theme'.");
+  }
+
+  // Generate fresh UUIDs
+  const newPages = (parsed.pages as SiteProject["pages"]).map((page) => ({
+    ...page,
+    id: crypto.randomUUID(),
+  }));
+
+  const project: SiteProject = {
+    id: crypto.randomUUID(),
+    name: parsed.name as string,
+    theme: parsed.theme as SiteProject["theme"],
+    pages: newPages,
+    activePageId: newPages[0].id,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...(parsed.whiteLabel ? { whiteLabel: parsed.whiteLabel as SiteProject["whiteLabel"] } : {}),
+    ...(parsed.analytics ? { analytics: parsed.analytics as SiteProject["analytics"] } : {}),
+    ...(parsed.domain ? { domain: parsed.domain as SiteProject["domain"] } : {}),
+  };
+
+  return project;
 }

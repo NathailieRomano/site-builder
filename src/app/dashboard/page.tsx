@@ -13,6 +13,7 @@ import {
 import { saveProject } from "@/lib/storage";
 import { templates } from "@/lib/templates";
 import { applyTemplate } from "@/lib/templates";
+import { importProjectFromZip } from "@/lib/export";
 import type { User } from "@supabase/supabase-js";
 
 export default function DashboardPage() {
@@ -21,6 +22,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const importInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     checkAuth();
@@ -126,6 +129,27 @@ export default function DashboardPage() {
     window.location.href = "/";
   }
 
+  async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Reset input so the same file can be selected again
+    e.target.value = "";
+
+    setImporting(true);
+    try {
+      const local = await importProjectFromZip(file);
+      const cloud = await saveCloudProject(local, undefined);
+      const localProject = cloudToLocal(cloud);
+      saveProject(localProject);
+      window.location.href = `/editor?project=${cloud.id}`;
+    } catch (err) {
+      console.error("Import failed:", err);
+      alert(err instanceof Error ? err.message : "Import fehlgeschlagen");
+    } finally {
+      setImporting(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0a12] flex items-center justify-center">
@@ -161,6 +185,20 @@ export default function DashboardPage() {
             <p className="text-sm text-zinc-500 mt-1">{projects.length} Projekt{projects.length !== 1 ? "e" : ""}</p>
           </div>
           <div className="flex gap-2">
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".zip"
+              onChange={handleImport}
+              className="hidden"
+            />
+            <button
+              onClick={() => importInputRef.current?.click()}
+              disabled={importing}
+              className="rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 hover:bg-white/5 transition-colors disabled:opacity-50"
+            >
+              {importing ? "Importiere..." : "📥 Importieren"}
+            </button>
             <button
               onClick={() => setShowTemplates(!showTemplates)}
               className="rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 hover:bg-white/5 transition-colors"
